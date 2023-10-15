@@ -47,9 +47,10 @@ def generate_clicked(*args):
     return
 
 
-shared.gradio_root = gr.Blocks(
+with gr.Blocks(
     title=f'Fooocus {fooocus_version.version} ' + ('' if args_manager.args.preset is None else args_manager.args.preset),
-    css=modules.html.css).queue()
+    css=modules.html.css).queue() as demo:
+    shared.gradio_root = demo 
 
 with shared.gradio_root:
     with gr.Row():
@@ -341,10 +342,10 @@ with shared.gradio_root:
             .then(fn=generate_clicked, inputs=ctrls, outputs=[progress_html, progress_window, gallery])\
             .then(lambda: (gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)), outputs=[run_button, stop_button, skip_button])
 
-
-shared.gradio_root.launch(
-    inbrowser=args_manager.args.auto_launch,
-    server_name=args_manager.args.listen,
-    server_port=args_manager.args.port,
-    share=args_manager.args.share
-)
+if __name__ == '__main__':
+    demo.launch(
+        inbrowser=args_manager.args.auto_launch,
+        server_name=args_manager.args.listen,
+        server_port=args_manager.args.port,
+        share=args_manager.args.share
+    )
